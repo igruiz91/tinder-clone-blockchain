@@ -1,5 +1,11 @@
+# Tinder clone blockchain app
+![](./assets/main.png)
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+This project uses Sanity, Moralis, OpenZeppelin and Alchemy APIS to work in Web 3.0
+
+Also styled using Tailwind CSS
 ## Getting Started
 
 First, run the development server:
