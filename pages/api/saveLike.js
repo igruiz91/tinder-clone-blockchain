@@ -9,7 +9,7 @@ const saveLike = async (req, res) => {
         {
           _key: `${req.body.likedUser} - ${req.body.currentUser}`,
           _ref: req.body.likedUser,
-          type: "reference",
+          _type: "reference",
         },
       ])
       .commit();

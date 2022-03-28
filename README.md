@@ -17,6 +17,15 @@ run:
 ```
 $ sanity start
 ```
+## Run Smart Contract
+go in ./smart-contract folder
+
+run:
+```
+$ npx hardhat run scripts/deploy.js --network rinkeby
+```
+### TINDER CONTRACT ADDRESS: 0x24dC6916805006Db39C7eD2f0203bA1C82B217e2 
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

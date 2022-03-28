@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-import React from "react";
 import { useState, createContext, useEffect } from "react";
 import { faker } from "@faker-js/faker";
 import { useMoralis } from "react-moralis";
@@ -14,6 +12,7 @@ export const TinderProvider = ({ children }) => {
 
   useEffect(() => {
     checkWalletConnection();
+
     if (isAuthenticated) {
       requestUsersData(user.get("ethAddress"));
       requestCurrentUserData(user.get("ethAddress"));
@@ -21,11 +20,14 @@ export const TinderProvider = ({ children }) => {
   }, [isAuthenticated]);
 
   const checkWalletConnection = async () => {
+    console.log(user)
     if (isAuthenticated) {
       const address = user.get("ethAddress");
       setCurrentAccount(address);
-      requestToCreateUserProfile(address, faker.name);
-    } else setCurrentAccount("");
+      requestToCreateUserProfile(address, faker.name.findName());
+    } else {
+      setCurrentAccount("");
+    }
   };
 
   const connectWallet = async () => {
@@ -45,52 +47,107 @@ export const TinderProvider = ({ children }) => {
     setCurrentAccount("");
   };
 
+  const handleRightSwipe = async (cardData, currentUserAddress) => {
+    const likeData = {
+      likedUser: cardData.walletAddress,
+      currentUser: currentUserAddress,
+    };
+
+    try {
+      await fetch("/api/saveLike", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(likeData),
+      });
+
+      const response = await fetch("/api/checkMatches", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(likeData),
+      });
+
+      const responseData = await response.json();
+
+      const matchStatus = responseData.data.isMatch;
+
+      if (matchStatus) {
+        console.log("match");
+
+        const mintData = {
+          walletAddresses: [cardData.walletAddress, currentUserAddress],
+          names: [cardData.name, currentUser.name],
+        };
+
+        await fetch("/api/mintMatchNft", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(mintData),
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const requestToCreateUserProfile = async (walletAddress, name) => {
     try {
       await fetch(`/api/createUser`, {
         method: "POST",
         headers: {
-          "Content-Type": "aplication/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userWalletAddress: walletAddress,
-          name,
+          name: name,
         }),
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   const requestCurrentUserData = async (walletAddress) => {
     try {
       const response = await fetch(
-        `/api/fetchCurrentUserData?activeAccount=${walletAddress}`,
-      )
-      const {data} = await response.json()
+        `/api/fetchCurrentUserData?activeAccount=${walletAddress}`
+      );
+      const data = await response.json();
 
-      setCurrentUser(data)
+      setCurrentUser(data.data);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const requestUsersData = async (activeAccount) => {
     try {
       const response = await fetch(
         `/api/fetchUsers?activeAccount=${activeAccount}`
       );
-      const {data} = await response.json()
+      const data = await response.json();
 
-      setCardsData(data);
+      setCardsData(data.data);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   return (
     <TinderContext.Provider
-      value={{ cardsData, connectWallet, disconnectWallet, currentAccount, currentUser }}
+      value={{
+        cardsData,
+        connectWallet,
+        disconnectWallet,
+        currentAccount,
+        currentUser,
+        handleRightSwipe,
+      }}
     >
       {children}
     </TinderContext.Provider>

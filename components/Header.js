@@ -15,6 +15,7 @@ const style = {
   authButton: `bg-white font-bold text-red-500 px-6 py-3 items-center ml-4 rounded-lg hover:bg-red-500 duration-300 hover:text-white`,
 };
 
+
 export default function Header() {
   const { connectWallet, currentAccount, disconnectWallet } =
     useContext(TinderContext);

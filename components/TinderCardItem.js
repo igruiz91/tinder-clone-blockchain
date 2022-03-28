@@ -1,9 +1,10 @@
-// import { TinderContext } from "../context/TinderContext";
 import { FaUndoAlt } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { AiFillStar } from "react-icons/ai";
 import { BsFillLightningChargeFill } from "react-icons/bs";
 import TinderCard from "react-tinder-card";
+import React, { useContext } from "react";
+import { TinderContext } from "../context/TinderContext";
 
 const style = {
   tinderCardWrapper: `w-full h-full absolute`,
@@ -21,15 +22,15 @@ const style = {
   lightningColors: `border-purple-500 text-purple-500`,
 };
 
-const onSwipe = (dir) => {
-  if (dir == "right") {
-    // handleRightSwipe(card, currentAccount);
-  }
-};
+const goBack = () => {};
+function TinderCardItem({ card }) {
+  const { currentAccount, handleRightSwipe } = useContext(TinderContext);
 
-// const handleRightSwipe = (second) => {};
-const goBack = () => {  }
-function TinderCardItem() {
+  const onSwipe = (dir) => {
+    if (dir == "right") {
+      handleRightSwipe(card, currentAccount);
+    }
+  };
   return (
     <TinderCard
       className={style.tinderCardWrapper}
@@ -39,16 +40,18 @@ function TinderCardItem() {
       <div
         className={style.wrapper}
         style={{
-          backgroundImage: `url(https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.superwallpapers.in%2Fhdwallpapers%2Fbeautiful-girls-wallpaper-hd-615.jpg&f=1&nofb=1)`,
+          backgroundImage: `url(${card.imageUrl})`,
         }}
       >
         <div className={style.space}>
           <div className={style.name}>
-            Israel
-            <span className={style.age}>99</span>
+            {card.name}
+            <span className={style.age}>{card.age}</span>
           </div>
         </div>
-        <div className={style.walletAddress}>0x....f455</div>
+        <div className={style.walletAddress}>
+          {card.walletAddress.slice(0, 6)}...{card.walletAddress.slice(39)}
+        </div>
         <div className={style.reactionsContainer}>
           <div className={`${style.backColors} ${style.buttonContainer}`}>
             <FaUndoAlt

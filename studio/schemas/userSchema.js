@@ -4,7 +4,7 @@ export const userSchema = {
   title: "Users",
   fields: [
     {
-      name: "users",
+      name: "name",
       type: "string",
       title: "Name",
     },
